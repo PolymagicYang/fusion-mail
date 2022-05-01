@@ -1,19 +1,16 @@
 use actix_web::{web, HttpResponse};
+use chrono::Utc;
 use serde::Deserialize;
 use sqlx::PgPool;
 use uuid::Uuid;
-use chrono::Utc;
 
 #[derive(Deserialize)]
 pub struct FormData {
     email: String,
-    name: String
+    name: String,
 }
 
-pub async fn subscribe(
-    form: web::Form<FormData>,
-    connection: web::Data<PgPool>
-) -> HttpResponse {
+pub async fn subscribe(form: web::Form<FormData>, connection: web::Data<PgPool>) -> HttpResponse {
     let _ = sqlx::query!(
         r#"
             INSERT INTO subscriptions (id, email, name, subscribed_at)
@@ -26,6 +23,6 @@ pub async fn subscribe(
     )
     .execute(connection.get_ref())
     .await;
-    
+
     HttpResponse::Ok().finish()
 }

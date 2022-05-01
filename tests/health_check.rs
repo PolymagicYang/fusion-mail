@@ -1,6 +1,6 @@
-use std::net::TcpListener;
-use sqlx::PgPool;
 use fusion_mail::configuration::get_configuration;
+use sqlx::PgPool;
+use std::net::TcpListener;
 
 #[tokio::test]
 async fn health_check_works() {
@@ -10,8 +10,7 @@ async fn health_check_works() {
     // `PgPool::connect` - it is not an inherent method of the struct!
     let connection = PgPool::connect(&connection_string)
         .await
-        .expect("Failed to connect to Postgres."); 
-
+        .expect("Failed to connect to Postgres.");
 
     let addr = spawn_app(connection);
     let client = reqwest::Client::new();
@@ -27,7 +26,7 @@ async fn health_check_works() {
 
 fn spawn_app(connection: PgPool) -> String {
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind a random addr.");
-    
+
     let port = listener
         .local_addr()
         .expect("Failed to get the local addr.")
@@ -40,7 +39,7 @@ fn spawn_app(connection: PgPool) -> String {
 #[tokio::test]
 async fn subscribe_returns_a_200_for_valid_form_data() {
     // Arrange
-   
+
     let configuration = get_configuration().expect("Failed to read configuration");
     let connection_string = configuration.database.connection_string();
     // The `Connection` trait MUST be in scope for us to invoke
@@ -61,7 +60,7 @@ async fn subscribe_returns_a_200_for_valid_form_data() {
         .await
         .expect("Failed to execute request.");
     assert_eq!(200, response.status().as_u16());
-    
+
     connection = PgPool::connect(&connection_string)
         .await
         .expect("Failed to connect to Postgres.");
@@ -83,8 +82,7 @@ async fn subscribe_returns_a_400_when_data_is_missing() {
     // `PgPool::connect` - it is not an inherent method of the struct!
     let connection = PgPool::connect(&connection_string)
         .await
-        .expect("Failed to connect to Postgres.");       
-
+        .expect("Failed to connect to Postgres.");
 
     // Arrange
     let app_address = spawn_app(connection);
@@ -104,7 +102,7 @@ async fn subscribe_returns_a_400_when_data_is_missing() {
             .send()
             .await
             .expect("Failed to execute request.");
-        
+
         assert_eq!(
             400,
             response.status().as_u16(),

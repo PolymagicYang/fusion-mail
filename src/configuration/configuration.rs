@@ -3,7 +3,7 @@ use config::{self, Config, File, FileFormat};
 #[derive(serde::Deserialize)]
 pub struct Settings {
     pub database: DatabaseSettings,
-    pub application_port: u16
+    pub application_port: u16,
 }
 
 #[derive(serde::Deserialize)]
@@ -18,7 +18,10 @@ pub struct DatabaseSettings {
 pub fn get_configuration() -> Result<Settings, config::ConfigError> {
     let mut builder = Config::builder();
     builder = builder.add_source(File::new("configs/configuration.yaml", FileFormat::Yaml));
-    builder.build().expect("parse error when read configuration from files.").try_deserialize()
+    builder
+        .build()
+        .expect("parse error when read configuration from files.")
+        .try_deserialize()
 }
 
 impl DatabaseSettings {
